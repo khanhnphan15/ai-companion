@@ -1,36 +1,43 @@
 // prisma/schema.prisma
 
+// Specify the data source, provider, and connection URL
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
+// Generate the Prisma Client with specified preview features
 generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"] // Use square brackets for an array
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
+// Define the Category model
 model Category {
-  id            String    @id @default(uuid()) 
-  name          String
-  companions    Companion[]
+  id          String    @id @default(uuid())
+  name        String
+  companions  Companion[]
 }
 
+// Define the Companion model
 model Companion {
-  id            String    @id @default(uuid()) // Fix typo in @default
+  id            String    @id @default(uuid())
   userId        String
   userName      String
   src           String
   name          String    @db.Text
-  description   String    // Fix typo in 'description'
+  description   String
   instructions  String    @db.Text
   seed          String    @db.Text
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt // Fix typo in 'updatedAt'
+  updatedAt     DateTime  @updatedAt()
 
+  // Establish a relation to the Category model
   category      Category  @relation(fields: [categoryId], references: [id])
   categoryId    String
+
+  // Indexing and full-text search
   @@index([categoryId])
-  @@fulltext([name]) // Fix typo in '@@fulltext'
+  @@fulltext([name])
 }
